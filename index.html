@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript" href="js/main.js"></script>
+  <title>ToDo List</title>
+</head>
+<body>
+  <style>
+    #text {
+      box-sizing: border-box;
+      vertical-align : middle;
+      height: 35px;
+      width: 300px;
+      padding: 5px;
+      font-size: 16px;
+    }
+    button {
+      height: 35px;
+      width: 80px;
+      padding: 0;
+      border: none;
+      border-radius: 3px;
+      background-color: #74b0e2;
+      color: #fff;
+    }
+    ul {
+      list-style: none;
+      width: 385px;
+      margin: 0;
+      margin-top: 20px;
+      padding: 0;
+    }
+    ul li {
+      padding: 5px 10px;
+      border-top: 1px solid #74b0e2;
+      border-left: 1px solid #74b0e2;
+      border-right: 1px solid #74b0e2;
+      font-size: 16px;
+    }
+    ul li:last-of-type {
+      border-bottom: 1px solid #74b0e2;
+    }
+  </style>
+  <h1>ToDo List</h1>
+  <form>
+    <input type="text" id="text" maxlength="20" required>
+    <button onclick="add()">追加</button>
+  </form>
+  <p>クリックで削除できます</p>
+  <ul id="list"></ul>
+  <script>
+    //ページロード時
+    window.onload = function() {
+      var list = [];
+      //  ローカルストレージ内のデータを獲得
+      for(key in localStorage) list[key] = localStorage.getItem(key);
+      for(i in list) load(list[i]);
+    }
+    // 追加
+    function add() {
+      // inputタグの値を取得
+      var str = document.getElementById("text").value;
+      // 空チェック
+      if (!str) {
+        alert("文字を入力してください。");
+        return;
+      }
+      // 重複チェック
+      if (localStorage.length != 0) {
+        for(key in localStorage){
+          if (localStorage.getItem(key) == str) {
+            alert("重複しています。");
+            return;
+          }
+        } 
+      }
+      // ローカルストレージに書き込み
+      var length = localStorage.length;
+      localStorage.setItem(length+1, str);
+    }
+    // 削除
+    function del() {
+      // 削除の対象を取得
+      var ele = event.target.innerHTML;
+      if (confirm(ele+"を削除しますか？")) {
+        for(key in localStorage){
+          if (localStorage.getItem(key) == ele) localStorage.removeItem(key);
+        }
+      }
+      location.reload();
+    }
+    // ロード
+    function load(key) {
+      // 要素の追加
+      var ul = document.querySelector('#list');
+      var li = document.createElement('li');
+      li.appendChild(document.createTextNode(key));
+      ul.appendChild(li);
+      li.addEventListener('click', del, false);
+    }
+  </script>
+</body>
+</html>
